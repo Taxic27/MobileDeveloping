@@ -1,4 +1,4 @@
-package com.example.mobiledeveloping.Task5
+package com.example.mobiledeveloping.Lab1.Task5
 
 abstract class Figure {
     // Свойства

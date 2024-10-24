@@ -1,4 +1,4 @@
-package com.example.mobiledeveloping.Task1
+package com.example.mobiledeveloping.Lab1.Task1
 
 fun main() {
     println("Введите первое число:")

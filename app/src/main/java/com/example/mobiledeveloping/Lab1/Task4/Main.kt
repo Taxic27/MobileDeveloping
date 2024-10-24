@@ -1,4 +1,4 @@
-package com.example.mobiledeveloping.Task4
+package com.example.mobiledeveloping.Lab1.Task4
 
 fun main() {
     val numbers = doubleArrayOf(1.5, 3.2, -4.5, 0.0, 7.3, 2.1, 6.0)

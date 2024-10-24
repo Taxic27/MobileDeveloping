@@ -1,4 +1,4 @@
-package com.example.mobiledeveloping.Task2
+package com.example.mobiledeveloping.Lab1.Task2
 
 fun main(){
     println("Введите номер месяца (1-12):")

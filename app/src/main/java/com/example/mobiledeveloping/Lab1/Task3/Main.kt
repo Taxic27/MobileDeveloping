@@ -1,4 +1,4 @@
-package com.example.mobiledeveloping.Task3
+package com.example.mobiledeveloping.Lab1.Task3
 
 fun main(){
     println("Введите кол-во строк")
