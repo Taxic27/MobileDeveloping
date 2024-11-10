@@ -1,18 +1,19 @@
 package com.example.mobiledeveloping
 
+import MainViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -22,73 +23,97 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SecondScreen() {
+fun MainScreen(navController: NavHostController, viewModel: MainViewModel = viewModel()) {
+    var showSnackbar by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Filled.FavoriteBorder,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("My First App")
+                title = { Text("My First App") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         },
         bottomBar = {
-            BottomAppBar {
-                Icon(
-                    imageVector = Icons.Filled.DateRange,
-                    contentDescription = "Календарь",
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.weight(1f, true))
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = "Главная",
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.weight(1f, true))
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Профиль",
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-        },
-        content = { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues)) {
-                Text(
-                    text = "Hello! That's your last chats",
-                    fontFamily = FontFamily.Default,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(16.dp)
-                )
-
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(10) { index ->
-                        ChatItem(index)
-                    }
+            BottomAppBar(
+                contentPadding = PaddingValues(10.dp)
+            ) {
+                IconButton(onClick = { viewModel.onCalendarClick() }) {
+                    Icon(Icons.Filled.DateRange, contentDescription = "Календарь")
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = {
+                    viewModel.onHomeClick()
+                }) {
+                    Icon(imageVector = Icons.Default.Home, contentDescription = "Главная")
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = {
+                    viewModel.onProfileClick()
+                }) {
+                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Профиль")
                 }
             }
         }
-    )
+    ) { paddingValues ->
+        if (showSnackbar) {
+            Snackbar(
+                action = {
+                    Button(onClick = { showSnackbar = false }) {
+                        Text("Закрыть")
+                    }
+                }
+            ) {
+                Text("Это Snackbar сообщение!")
+            }
+        }
+
+        when {
+            viewModel.isProfileClicked.value -> Profile(paddingValues, navController)
+            viewModel.isHomeClicked.value -> ChatList(paddingValues, navController, { showSnackbar = true })
+            viewModel.isCalendarClicked.value -> Calendar(paddingValues, navController)
+            else -> ChatList(paddingValues, navController, { showSnackbar = true })
+        }
+    }
 }
 
 @Composable
-fun ChatItem(index: Int) {
+fun ChatList(paddingValues: PaddingValues, navController: NavController, onChatClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(10) { index ->
+                ChatItem(index) {
+                    navController.navigate("chat/$index") // Передача параметра
+                    onChatClick() // Отображение Snackbar
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ChatItem(index: Int, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .clickable { onClick() } // Обработка клика
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
@@ -116,8 +141,42 @@ fun ChatItem(index: Int) {
     }
 }
 
+@Composable
+fun Profile(paddingValues: PaddingValues, navController: NavController) {
+    Column(
+        modifier = Modifier.padding(paddingValues)
+    ) {
+        Text(text = "Hello, Dear User!")
+        Row {
+            Image(painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "avatar",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(70.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.Gray))
+            Column {
+                Text(text = "Danila Gorodnichev", modifier = Modifier.padding(10.dp))
+                Text(text = "19 years old", modifier = Modifier.padding(7.dp))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Calendar(paddingValues: PaddingValues, navController: NavController) {
+    val datePickerState = rememberDatePickerState()
+    DatePicker(
+        modifier = Modifier.padding(paddingValues),
+        state = datePickerState,
+        showModeToggle = false
+    )
+}
+
 @Preview
 @Composable
 private fun preview() {
-    SecondScreen()
+    val navController = rememberNavController()
+    MainScreen(navController = navController)
 }
