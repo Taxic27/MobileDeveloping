@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import com.example.mobiledeveloping.utils.DrawerEvents
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun DrawerMenu (onEvent:(DrawerEvents) -> Unit){
     Box(modifier = Modifier.fillMaxSize()){
         Image(painter = painterResource(

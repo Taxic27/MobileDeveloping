@@ -19,11 +19,11 @@
         <item> Дуб|dub.jpg </item>
         <item> Тополь|topol.jpg </item>
     </string-array>
-    <string-array name="Veg">
+    <string-array name="veg">
         <item> Капуста|kapusta.jpg </item>
         <item> Свекла|svekla.jpg </item>
     </string-array>
-    <string-array name="Fruits">
+    <string-array name="fruits">
         <item> Яблоко|apple.jpg </item>
         <item> Апельсин|orange.jpg </item>
     </string-array>
