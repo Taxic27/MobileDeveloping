@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,11 +26,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.mobiledeveloping.screens.MainCard
+import com.example.mobiledeveloping.screens.TabLayout
 import org.json.JSONObject
 
 const val API_KEY = "62152200da754cf697904409241211"
@@ -40,69 +46,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MobileDevelopingTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("London", this)
+                Image(
+                    painter  = painterResource(id = R.drawable.weather_bg),
+                    contentDescription = "im1",
+                    modifier = Modifier.fillMaxSize()
+                        .alpha(0.5f),
+                    contentScale = ContentScale.FillBounds
+                )
+                Column {
+                    MainCard()
+                    TabLayout()
                 }
             }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, context: Context, modifier: Modifier = Modifier) {
-    val state = remember{
-        mutableStateOf("unknown")
-    }
-    Column(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight(0.5f)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "Temp in $name = ${state.value}")
-        }
-        Box(modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth(),
-            contentAlignment = Alignment.BottomCenter
-        )
-        {
-            Button(onClick = {
-                getResult(name, state, context)
-
-            }, modifier = Modifier
-                .padding(5.dp)
-                .fillMaxWidth()
-            ){
-                Text(text = "Refresh")
-            }
-        }
-    }
-}
-
-private fun getResult(city: String, state: MutableState<String>, context: Context) {
-    val url = "https://api.weatherapi.com/v1/current.json" +
-            "?key=$API_KEY&" +
-            "q=$city" +
-            "&aqi=no"
-    //Добавил новый сайт, так все заработало
-    val queue = Volley.newRequestQueue(context)
-    val stringRequest = StringRequest(
-        Request.Method.GET,
-        url,
-        { response ->
-            val obj = JSONObject(response)
-            state.value = obj.getJSONObject("current").getString("temp_c")
-        },
-        { error ->
-            Log.d("Mylog", "Error $error")
-        }
-    )
-    queue.add(stringRequest)
 }
 
 
