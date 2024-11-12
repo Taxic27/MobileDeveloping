@@ -1,6 +1,5 @@
 package com.example.mobiledeveloping.ui_components
 
-import android.text.Layout
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,22 +21,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.dp
 import com.example.mobiledeveloping.ui.theme.BgTrans
 import com.example.mobiledeveloping.ui.theme.MainRed
 import com.example.mobiledeveloping.R
 import androidx.compose.ui.Modifier
+import com.example.mobiledeveloping.utils.DrawerEvents
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun DrawerMenu (){
+fun DrawerMenu (onEvent:(DrawerEvents) -> Unit){
     Box(modifier = Modifier.fillMaxSize()){
         Image(painter = painterResource(
             id = R.drawable.drawer_list_bg),
@@ -47,7 +45,9 @@ fun DrawerMenu (){
         )
         Column(modifier = Modifier.fillMaxSize()){
             Header()
-            Body()
+            Body(){event ->
+                onEvent(event)
+            }
         }
     }
 }
@@ -83,7 +83,7 @@ fun Header(){
     }
 }
 @Composable
-fun Body(){
+fun Body(onEvent:(DrawerEvents) -> Unit){
     val list = stringArrayResource(id = R.array.drawer_list)
     LazyColumn (modifier = Modifier.fillMaxSize()){
         itemsIndexed(list){index, title ->
@@ -99,6 +99,7 @@ fun Body(){
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable{
+                            onEvent(DrawerEvents.OnItemClick(title, index))
                         }
                         .padding(10.dp)
                         .wrapContentWidth(),
