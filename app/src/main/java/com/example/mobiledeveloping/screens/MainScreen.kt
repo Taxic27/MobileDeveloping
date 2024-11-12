@@ -1,7 +1,6 @@
 package com.example.mobiledeveloping.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,8 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,9 +39,8 @@ import com.example.mobiledeveloping.data.WeatherModel
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.MutableState
 
-@Preview(showBackground = true)
 @Composable
-fun MainCard(){
+fun MainCard(currentDay: MutableState<WeatherModel>) {
     Column(
         modifier = Modifier
             .padding(5.dp),
@@ -64,7 +58,7 @@ fun MainCard(){
                     horizontalArrangement = Arrangement.SpaceBetween
                 ){
                     Text(
-                        text = "12 Nov 2024 11:00",
+                        text = currentDay.value.time,
                         modifier = Modifier.padding(
                             top = 8.dp,
                             start = 8.dp
@@ -72,7 +66,7 @@ fun MainCard(){
                         color = Color.White
                     )
                     AsyncImage(
-                        model = "https://cdn.weatherapi.com/weather/64x64/day/116.png",
+                        model = "https:" + currentDay.value.icon,
                         contentDescription = "im2",
                         modifier = Modifier
                             .padding(
@@ -83,17 +77,17 @@ fun MainCard(){
                     )
                 }
                 Text(
-                    text = "Kolomna",
+                    text = currentDay.value.city,
                     style = TextStyle(fontSize = 24.sp),
                     color = Color.White
                 )
                 Text(
-                    text = "10°C",
+                    text = currentDay.value.currentTemp.toFloat().toInt().toString() + "°C",
                     style = TextStyle(fontSize = 65.sp),
                     color = Color.White
                 )
                 Text(
-                    text = "Sunny",
+                    text = currentDay.value.condition,
                     style = TextStyle(fontSize = 16.sp),
                     color = Color.White
                 )
@@ -111,7 +105,9 @@ fun MainCard(){
                         )
                     }
                     Text(
-                        text = "15°C/8°C",
+                        text = "${currentDay.value
+                            .maxTemp.toFloat().toInt()}°C/${currentDay
+                            .value.minTemp.toFloat().toInt()}°C",
                         style = TextStyle(fontSize = 16.sp),
                         color = Color.White
                     )
