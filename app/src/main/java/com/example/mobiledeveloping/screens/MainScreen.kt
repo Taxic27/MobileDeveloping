@@ -40,6 +40,8 @@ import com.example.mobiledeveloping.ui.theme.BlueLight
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.LazyColumn
+import com.example.mobiledeveloping.data.WeatherModel
+import androidx.compose.foundation.lazy.itemsIndexed
 
 @Preview(showBackground = true)
 @Composable
@@ -61,7 +63,7 @@ fun MainCard(){
                     horizontalArrangement = Arrangement.SpaceBetween
                 ){
                     Text(
-                        text = "12 November 2024 11:00",
+                        text = "12 Nov 2024 11:00",
                         modifier = Modifier.padding(
                             top = 8.dp,
                             start = 8.dp
@@ -129,7 +131,7 @@ fun MainCard(){
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPagerApi::class)
 @Composable
-fun TabLayout(){
+fun TabLayout() {
     val tabList = listOf("HOURS", "DAYS")
     val pagerState = com.google.accompanist.pager.rememberPagerState()
     val tabIndex = pagerState.currentPage
@@ -139,22 +141,22 @@ fun TabLayout(){
             start = 5.dp,
             end = 5.dp
         ).clip(RoundedCornerShape(5.dp))
-    ){
+    ) {
         TabRow(
             selectedTabIndex = tabIndex,
-            indicator = {pos ->
+            indicator = { pos ->
                 TabRowDefaults.Indicator(
                     modifier = Modifier.tabIndicatorOffset(pos[tabIndex])
                 )
             },
             containerColor = BlueLight,
             contentColor = Color.Black
-        ){
-            tabList.forEachIndexed{index, text ->
+        ) {
+            tabList.forEachIndexed { index, text ->
                 Tab(
                     selected = false,
                     onClick = {
-                        coroutineScope.launch{
+                        coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
 
                         }
@@ -169,13 +171,35 @@ fun TabLayout(){
             count = tabList.size,
             state = pagerState,
             modifier = Modifier.weight(1.0f)
-        ){
-                index ->
+        ) { index ->
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
-            ){
-                items(15){
-                    ListItem()
+            ) {
+                itemsIndexed(
+                    listOf(
+                        WeatherModel(
+                            "London",
+                            "10:00",
+                            "25°C",
+                            "Sunny",
+                            "//cdn.weatherapi.com/weather/64x64/day/176.png",
+                            "",
+                            "",
+                            ""
+                        ),
+                        WeatherModel(
+                            "London",
+                            "26/07/2024",
+                            "",
+                            "Sunny",
+                            "//cdn.weatherapi.com/weather/64x64/day/176.png",
+                            "26°",
+                            "12°",
+                            "fgdgdfgd"
+                        )
+                    )
+                ) { _, item ->
+                    ListItem(item)
                 }
             }
         }
