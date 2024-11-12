@@ -1,0 +1,61 @@
+Index: app/src/main/java/com/example/mobiledeveloping/MainViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/mobiledeveloping/MainViewModel.kt b/app/src/main/java/com/example/mobiledeveloping/MainViewModel.kt
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/java/com/example/mobiledeveloping/MainViewModel.kt	
+@@ -0,0 +1,4 @@
++package com.example.mobiledeveloping
++
++class MainViewModel {
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/mobiledeveloping/App.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/mobiledeveloping/App.kt b/app/src/main/java/com/example/mobiledeveloping/App.kt
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/java/com/example/mobiledeveloping/App.kt	
+@@ -0,0 +1,9 @@
++package com.example.mobiledeveloping
++
++import android.app.Application
++import dagger.hilt.android.HiltAndroidApp
++import kotlin.text.Typography.dagger
++
++@HiltAndroidApp
++class App : Application(){
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/mobiledeveloping/db/MainDb.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/mobiledeveloping/db/MainDb.kt b/app/src/main/java/com/example/mobiledeveloping/db/MainDb.kt
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/java/com/example/mobiledeveloping/db/MainDb.kt	
+@@ -0,0 +1,13 @@
++package com.example.mobiledeveloping.db
++
++import androidx.room.Dao
++import androidx.room.Database
++import androidx.room.RoomDatabase
++import com.example.mobiledeveloping.utils.ListItem
++@Database(
++    entities = [ListItem::class],
++    version = 1
++)
++abstract class MainDb:  RoomDatabase(){
++    abstract val dao: Dao
++}
+\ No newline at end of file
+diff --git a/app/src/main/assets/db/info.db b/app/src/main/assets/db/info.db
+new file mode 100644
