@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.clickable
 import com.example.mobiledeveloping.ui.theme.BgTrans
 import com.example.mobiledeveloping.ui.theme.MainRed
 import com.example.mobiledeveloping.R
@@ -30,11 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 
 @Composable
-fun MainListItem (item: ListItem){
+fun MainListItem (item: ListItem, onClick:(ListItem) -> Unit){
     Card(
         modifier = Modifier.fillMaxWidth()
             .height(250.dp)
-            .padding(5.dp),
+            .padding(5.dp)
+            .clickable {
+                onClick(item)
+            },
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, MainRed)
     ) {
@@ -43,7 +47,9 @@ fun MainListItem (item: ListItem){
             contentAlignment = Alignment.BottomCenter
         ) {
             AssetImage(imageName = item.imageName,
-                contentDescription = item.title)
+                contentDescription = item.title,
+                modifier = Modifier.fillMaxSize()
+            )
             Text(
                 text = item.title,
                 modifier = Modifier
@@ -58,7 +64,7 @@ fun MainListItem (item: ListItem){
     }
 }
 @Composable
-fun AssetImage(imageName:String, contentDescription: String){
+fun AssetImage(imageName:String, contentDescription: String, modifier: Modifier){
     val context = LocalContext.current
     val assetManager = context.assets
     val inputStream = assetManager.open(imageName)
@@ -67,6 +73,6 @@ fun AssetImage(imageName:String, contentDescription: String){
         bitmap = bitMap.asImageBitmap(),
         contentDescription = contentDescription,
         contentScale = ContentScale.Crop,
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier
     )
 }

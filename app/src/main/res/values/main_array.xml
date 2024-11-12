@@ -8,23 +8,23 @@
         <item> Овощи </item>
     </string-array>
     <string-array name="mushrooms">
-        <item> Лисичка|lisichka.jpg </item>
-        <item> Мухамор|muhomor.jpg </item>
+        <item> Лисичка|lisichka.jpg|lisichka.html</item>
+        <item> Мухамор|muhomor.jpg|lisichka.html</item>
     </string-array>
     <string-array name="medicial_herbs">
-        <item> Крапива|krapiva.jpg </item>
-        <item> Ромашка|romashka.jpg </item>
+        <item> Крапива|krapiva.jpg|lisichka.html</item>
+        <item> Ромашка|romashka.jpg|lisichka.html</item>
     </string-array>
     <string-array name="trees">
-        <item> Дуб|dub.jpg </item>
-        <item> Тополь|topol.jpg </item>
+        <item> Дуб|dub.jpg|lisichka.html</item>
+        <item> Тополь|topol.jpg|lisichka.html</item>
     </string-array>
     <string-array name="veg">
-        <item> Капуста|kapusta.jpg </item>
-        <item> Свекла|svekla.jpg </item>
+        <item> Капуста|kapusta.jpg|lisichka.html</item>
+        <item> Свекла|svekla.jpg|lisichka.html</item>
     </string-array>
     <string-array name="fruits">
-        <item> Яблоко|apple.jpg </item>
-        <item> Апельсин|orange.jpg </item>
+        <item> Яблоко|apple.jpg|lisichka.html</item>
+        <item> Апельсин|orange.jpg|lisichka.html</item>
     </string-array>
 </resources>
