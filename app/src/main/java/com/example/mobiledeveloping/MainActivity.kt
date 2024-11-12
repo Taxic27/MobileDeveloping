@@ -33,6 +33,7 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 
 const val API_KEY = "62152200da754cf697904409241211"
+// Добавил свой апи
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +89,7 @@ private fun getResult(city: String, state: MutableState<String>, context: Contex
             "?key=$API_KEY&" +
             "q=$city" +
             "&aqi=no"
-    Log.d("Mylog", "URL: $url")
+    //Добавил новый сайт, так все заработало
     val queue = Volley.newRequestQueue(context)
     val stringRequest = StringRequest(
         Request.Method.GET,
