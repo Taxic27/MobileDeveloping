@@ -39,6 +39,7 @@ import com.example.mobiledeveloping.R
 import com.example.mobiledeveloping.ui.theme.BlueLight
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.lazy.LazyColumn
 
 @Preview(showBackground = true)
 @Composable
@@ -170,6 +171,13 @@ fun TabLayout(){
             modifier = Modifier.weight(1.0f)
         ){
                 index ->
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ){
+                items(15){
+                    ListItem()
+                }
+            }
         }
     }
 }
