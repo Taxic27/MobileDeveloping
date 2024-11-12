@@ -53,7 +53,10 @@ dependencies {
 
     implementation ("com.google.accompanist:accompanist-pager:0.19.0")
     implementation ("com.google.accompanist:accompanist-pager-indicators:0.27.1")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.android.volley:volley:1.2.1")
+    implementation ("com.google.code.gson:gson:2.8.8")
     implementation(libs.androidx.core.ktx)
     implementation(libs.volley)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -64,6 +67,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation("io.coil-kt:coil-compose:2.0.0-rc01")
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

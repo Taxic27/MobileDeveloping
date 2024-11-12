@@ -85,9 +85,9 @@ fun MainCard(currentDay: MutableState<WeatherModel>, onClickSync: () -> Unit, on
                 )
                 Text(
                     text = if(currentDay.value.currentTemp.isNotEmpty())
-                        currentDay.value.currentTemp.toFloat().toInt().toString() + "°C"
-                    else currentDay.value.maxTemp.toFloat().toInt().toString() +
-                            "°C/${currentDay.value.minTemp.toFloat().toInt()}°C",
+                        currentDay.value.currentTemp.replace("°C", "").toFloat().toInt().toString() + "°C"
+                    else currentDay.value.maxTemp.replace("°C", "").toFloat().toInt().toString() +
+                            "°C/${currentDay.value.minTemp.replace("°C", "").toFloat().toInt()}°C",
                     style = TextStyle(fontSize = 65.sp),
                     color = Color.White
                 )
@@ -112,8 +112,8 @@ fun MainCard(currentDay: MutableState<WeatherModel>, onClickSync: () -> Unit, on
                     }
                     Text(
                         text = "${currentDay.value
-                            .maxTemp.toFloat().toInt()}°C/${currentDay
-                            .value.minTemp.toFloat().toInt()}°C",
+                            .maxTemp.replace("°C", "").toFloat().toInt()}°C/${currentDay
+                            .value.minTemp.replace("°C", "").toFloat().toInt()}°C",
                         style = TextStyle(fontSize = 16.sp),
                         color = Color.White
                     )
@@ -176,8 +176,21 @@ fun TabLayout(daysList: MutableState<List<WeatherModel>>, currentDay: MutableSta
             state = pagerState,
             modifier = Modifier.weight(1.0f)
         ){index ->
-            val list = when(index){
-                0 -> getWeatherByHours(currentDay.value.hours)
+            val list = when (index) {
+                0 -> {
+                    val hoursArray = JSONArray()
+                    currentDay.value.hours.forEach { hour ->
+                        val jsonObject = JSONObject()
+                        jsonObject.put("time", hour.time)
+                        jsonObject.put("temp_c", hour.tempC.toInt())
+                        jsonObject.put("condition", JSONObject().apply {
+                            put("text", hour.condition.text)
+                            put("icon", hour.condition.icon)
+                        })
+                        hoursArray.put(jsonObject)
+                    }
+                    getWeatherByHours(hoursArray.toString())
+                }
                 1 -> daysList.value
                 else -> daysList.value
             }
@@ -201,7 +214,7 @@ private fun getWeatherByHours(hours: String): List<WeatherModel> {
                 item.getJSONObject("condition").getString("icon"),
                 "",
                 "",
-                ""
+                listOf()
             )
         )
     }

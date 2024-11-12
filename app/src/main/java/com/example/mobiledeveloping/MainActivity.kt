@@ -16,14 +16,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.example.mobiledeveloping.data.WeatherModel
 import com.example.mobiledeveloping.screens.DialogSearch
 import com.example.mobiledeveloping.screens.MainCard
 import com.example.mobiledeveloping.screens.TabLayout
-import org.json.JSONObject
+import com.example.mobiledeveloping.screens.WeatherApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 const val API_KEY = "62152200da754cf697904409241211"
 
@@ -32,13 +37,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MobileDevelopingTheme {
-                val daysList = remember{
+                val navController = rememberNavController()
+                val daysList = remember {
                     mutableStateOf(listOf<WeatherModel>())
                 }
-                val dialogState = remember{
+                val dialogState = remember {
                     mutableStateOf(false)
                 }
-                val currentDay = remember{
+                val currentDay = remember {
                     mutableStateOf(WeatherModel(
                         "",
                         "",
@@ -47,18 +53,17 @@ class MainActivity : ComponentActivity() {
                         "",
                         "0.0",
                         "0.0",
-                        ""
-                    )
-                    )
+                        listOf()
+                    ))
                 }
-                if(dialogState.value){
+                if (dialogState.value) {
                     DialogSearch(dialogState, onSubmit = {
                         getData(it, this, daysList, currentDay)
                     })
                 }
                 getData("London", this, daysList, currentDay)
                 Image(
-                    painter  = painterResource(id = R.drawable.weather_bg),
+                    painter = painterResource(id = R.drawable.weather_bg),
                     contentDescription = "im1",
                     modifier = Modifier.fillMaxSize()
                         .alpha(0.5f),
@@ -69,8 +74,7 @@ class MainActivity : ComponentActivity() {
                         getData("London", this@MainActivity, daysList, currentDay)
                     }, onClickSearch = {
                         dialogState.value = true
-                    }
-                    )
+                    })
                     TabLayout(daysList, currentDay)
                 }
             }
@@ -78,56 +82,64 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private fun getData(city:String, context: Context,
-                    daysList: MutableState<List<WeatherModel>>,
-                    currentDay: MutableState<WeatherModel>){
-    val url = "https://api.weatherapi.com/v1/forecast.json?key=$API_KEY" +
-            "&q=$city" +
-            "&days=" +
-            "3" +
-            "&aqi=no&alerts=no"
-    val queue = Volley.newRequestQueue(context)
-    val sRequest = StringRequest(
-        Request.Method.GET,
-        url,{
-                response ->
-            val list = getWeatherByDays(response)
-            currentDay.value = list[0]
-            daysList.value = list
-        },
-        {
-            Log.d("MyLog", "VolleyError: $it")
+private fun getData(
+    city: String, context: Context,
+    daysList: MutableState<List<WeatherModel>>,
+    currentDay: MutableState<WeatherModel>
+) {
+    val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl("https://api.weatherapi.com/v1/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val service: WeatherApi = retrofit.create(WeatherApi::class.java)
+
+    val job = CoroutineScope(Dispatchers.IO).launch {
+        val weather = service.getWeather(city)
+
+        daysList.value = weather.forecast.forecastday.map { forecastDay ->
+            WeatherModel(
+                city = weather.location.name,
+                time = forecastDay.date,
+                currentTemp = "",
+                condition = forecastDay.day.condition.text,
+                icon = forecastDay.day.condition.icon,
+                maxTemp = forecastDay.day.maxTemp.toFloat().toInt().toString() + "°C",
+                minTemp = forecastDay.day.minTemp.toFloat().toInt().toString() + "°C",
+                hours = forecastDay.hour
+            )
         }
 
-    )
-    queue.add(sRequest)
+        currentDay.value = daysList.value.first().copy(
+            time = weather.current.time,
+            currentTemp = weather.current.currentTemp.toFloat().toInt().toString() + "°C",
+        )
+    }
+
+    job
 }
-private fun getWeatherByDays(response: String): List<WeatherModel>{
-    if(response.isEmpty()) return listOf()
+
+private fun getWeatherByHours(hours: List<HourDto>): List<WeatherModel> {
+    if (hours.isEmpty()) return listOf()
+
     val list = ArrayList<WeatherModel>()
-    val mainObject = JSONObject(response)
-    val city = mainObject.getJSONObject("location").getString("name")
-    val days = mainObject.getJSONObject("forecast").getJSONArray("forecastday")
-    for (i in 0 until days.length()){
-        val item = days[i] as JSONObject
+
+    hours.forEach { item ->
         list.add(
             WeatherModel(
-                city,
-                item.getString("date"),
-                "",
-                item.getJSONObject("day").getJSONObject("condition").getString("text"),
-                item.getJSONObject("day").getJSONObject("condition").getString("icon"),
-                item.getJSONObject("day").getString("maxtemp_c"),
-                item.getJSONObject("day").getString("mintemp_c"),
-                item.getJSONArray("hour").toString()
+                city = "",
+                time = item.time,
+                currentTemp = item.tempC.toFloat().toInt().toString() + "°C",
+                condition = item.condition.text,
+                icon = item.condition.icon,
+                maxTemp = "",
+                minTemp = "",
+                hours = listOf()
             )
         )
     }
-    list[0] = list[0].copy(
-        time = mainObject.getJSONObject("current").getString("last_updated"),
-        currentTemp = mainObject.getJSONObject("current").getString("temp_c"),
-    )
     return list
 }
+
 
 
