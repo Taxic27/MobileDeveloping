@@ -40,7 +40,6 @@ import com.example.mobiledeveloping.screens.TabLayout
 import org.json.JSONObject
 
 const val API_KEY = "62152200da754cf697904409241211"
-// Добавил свой апи
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +59,7 @@ class MainActivity : ComponentActivity() {
                 )
                 Column {
                     MainCard()
-                    TabLayout()
+                    TabLayout(daysList)
                 }
             }
         }
@@ -68,7 +67,7 @@ class MainActivity : ComponentActivity() {
 }
 
 private fun getData(city:String, context: Context, daysList: MutableState<List<WeatherModel>>){
-    val url = "http://api.weatherapi.com/v1/forecast.json?key=$API_KEY" +
+    val url = "https://api.weatherapi.com/v1/forecast.json?key=$API_KEY" +
             "&q=$city" +
             "&days=" +
             "3" +
@@ -84,6 +83,7 @@ private fun getData(city:String, context: Context, daysList: MutableState<List<W
         {
             Log.d("MyLog", "VolleyError: $it")
         }
+
     )
     queue.add(sRequest)
 }
@@ -103,7 +103,7 @@ private fun getWeatherByDays(response: String): List<WeatherModel>{
                 item.getJSONObject("day").getJSONObject("condition").getString("text"),
                 item.getJSONObject("day").getJSONObject("condition").getString("icon"),
                 item.getJSONObject("day").getString("maxtemp_c"),
-                item.getJSONObject("day").getString("condition"),
+                item.getJSONObject("day").getString("mintemp_c"),
                 item.getJSONArray("hour").toString()
             )
         )

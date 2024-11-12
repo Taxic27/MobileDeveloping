@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.LazyColumn
 import com.example.mobiledeveloping.data.WeatherModel
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.runtime.MutableState
 
 @Preview(showBackground = true)
 @Composable
@@ -120,7 +121,8 @@ fun MainCard(){
                     ){
                         Icon(
                             painter = painterResource(id = R.drawable.ic_sync),
-                            contentDescription = "im4"
+                            contentDescription = "im4",
+                            tint = Color.White
                         )
                     }
                 }
@@ -131,7 +133,7 @@ fun MainCard(){
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPagerApi::class)
 @Composable
-fun TabLayout() {
+fun TabLayout(daysList: MutableState<List<WeatherModel>>) {
     val tabList = listOf("HOURS", "DAYS")
     val pagerState = com.google.accompanist.pager.rememberPagerState()
     val tabIndex = pagerState.currentPage
@@ -158,7 +160,6 @@ fun TabLayout() {
                     onClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
-
                         }
                     },
                     text = {
@@ -176,28 +177,7 @@ fun TabLayout() {
                 modifier = Modifier.fillMaxSize()
             ) {
                 itemsIndexed(
-                    listOf(
-                        WeatherModel(
-                            "London",
-                            "10:00",
-                            "25°C",
-                            "Sunny",
-                            "//cdn.weatherapi.com/weather/64x64/day/176.png",
-                            "",
-                            "",
-                            ""
-                        ),
-                        WeatherModel(
-                            "London",
-                            "26/07/2024",
-                            "",
-                            "Sunny",
-                            "//cdn.weatherapi.com/weather/64x64/day/176.png",
-                            "26°",
-                            "12°",
-                            "fgdgdfgd"
-                        )
-                    )
+                    daysList.value
                 ) { _, item ->
                     ListItem(item)
                 }
